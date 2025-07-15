@@ -1,12 +1,19 @@
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import session# Database connection string
+from sqlalchemy.orm import session 
 from fastapi import FastAPI, Depends , HTTPException
 from pydantic import BaseModel
-from typing import List , Optional
+from typing import  Optional
+from fastapi.responses import HTMLResponse\
 
 app = FastAPI()
+
+# Root endpoint to test the FastAPI application
+@app.get("/", response_class=HTMLResponse)
+def read_root():
+    return "<h1><a href='/docs'>Go to Docs</a></h1>"
+# Database setup
 DATABASE_URL = "sqlite:///./test.db"
 
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
@@ -86,6 +93,7 @@ def update_user(user_id: int, user: UserUpdate, db: session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
     return db_user
+
 
 #delete operation to delete a user by ID
 @app.delete("/users/{user_id}", response_model=UserResponse)
